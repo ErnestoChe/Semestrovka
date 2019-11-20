@@ -10,10 +10,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import sample.DataBaseController.dbConnection;
-
+import sample.DataBaseController.dbHandler;
 import java.io.IOException;
-import java.sql.SQLException;
+
+import static sample.AlertHandler.showAlert;
 
 public class LoginController {
 
@@ -54,18 +54,37 @@ public class LoginController {
                 }
             }
         });
-        //проверка подключения к базе
-        // TODO вход в систему пользователя
         // TODO логи в базу о том, что зашел в систему
         loginButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                try {
-                    if(dbConnection.getConnection().isValid(0)){
-                        System.out.println("connection valid");
-                    }else System.out.println("connection is invalid");
-                } catch (SQLException e) {
-                    e.printStackTrace();
+                String login = nameText.getText();
+                String pass = passText.getText();
+
+                String user = dbHandler.loginUser(login, pass);
+                System.out.println(user);
+
+                if(!user.equals("")){
+                    showAlert("Welcome " + user,
+                            "login succesful",
+                            false);
+                    //переход к окну
+                    Stage stage;
+                    Parent root;
+                    stage = (Stage) loginButton.getScene().getWindow();
+                    loginButton.getScene().getWindow().hide();
+                    System.out.println("login to file chooser");
+                    try {
+                        root = FXMLLoader.load(getClass().getResource("/sample/FileSelection/filer.fxml"));
+                        Scene scene = new Scene(root);
+                        stage.setScene(scene);
+                        stage.show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                }else{
+                    errorLabel.setText("Неверное имя пользователя или пароль");
                 }
             }
         });

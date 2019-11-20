@@ -1,21 +1,20 @@
 package sample.UserController;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.ResourceBundle;
-
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import sample.DataBaseController.dbHandler;
+
+import java.io.IOException;
+
+import static sample.AlertHandler.showAlert;
 
 public class RegistrationController {
 
@@ -78,33 +77,28 @@ public class RegistrationController {
                     //проверка совпадения пароля в двух полях
                     if(userPassText.getText().equals(userPassCheck.getText())){
                         if(report.equals("23505")){
-                            showAlert("Пользователь с таким логином уже существует", "Ошибка!", true);
+                            showAlert("Пользователь с таким логином уже существует",
+                                    "Ошибка!",
+                                    true);
                         }else if(report.equals("1")){
                             //System.out.println("uspeh");
-                            showAlert("Пользователь успешно создан" ,"Информация", false);
+                            showAlert("Пользователь успешно создан" ,
+                                    "Информация",
+                                    false);
                         }
                     }else {
-                        showAlert("Пароли должны совпадать", "Ошибка!", true);
-                        //errorLabel.setText("пароли должны совпадать");
+                        showAlert("Пароли должны совпадать",
+                                "Ошибка!",
+                                true);
                     }
                 }else{
-                    showAlert("Заполните все поля", "Ошибка!", true);
+                    showAlert("Заполните все поля",
+                            "Ошибка!",
+                            true);
                 }
             }
         });
     }
 
-    public void showAlert(String alertText, String alertTitle, boolean isError){
-        Alert alert_info;
-        if(isError){
-            alert_info = new Alert(Alert.AlertType.WARNING);
-            alert_info.setContentText(alertText);
-            alert_info.setTitle(alertTitle);
-        }else{
-            alert_info = new Alert(Alert.AlertType.INFORMATION);
-            alert_info.setContentText(alertText);
-            alert_info.setTitle(alertTitle);
-        }
-        alert_info.showAndWait();
-    }
+
 }
