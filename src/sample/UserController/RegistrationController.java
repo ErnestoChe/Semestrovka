@@ -10,17 +10,14 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import sample.DataBaseController.dbHandler;
 
 public class RegistrationController {
-
-    @FXML
-    private ResourceBundle resources;
-
-    @FXML
-    private URL location;
 
     @FXML
     private TextField userNameText;
@@ -35,7 +32,7 @@ public class RegistrationController {
     private TextField userPassCheck;
 
     @FXML
-    private TextField userId;
+    private TextField userLogin;
 
     @FXML
     private Button userRegButton;
@@ -44,7 +41,11 @@ public class RegistrationController {
     private Button backButton;
 
     @FXML
+    private Label errorLabel;
+
+    @FXML
     void initialize() {
+        //кнопка возвращения на окно входа в систему
         backButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -64,5 +65,46 @@ public class RegistrationController {
                 }
             }
         });
+        userRegButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                String login = userLogin.getText();
+                String name = userNameText.getText();
+                String lastname = userSurnameText.getText();
+                String password;
+                password = userPassText.getText();
+                String report = dbHandler.addUser(login, password, name, lastname);
+                if(!login.equals("") && !name.equals("") && !lastname.equals("") && !password.equals("")){
+                    //проверка совпадения пароля в двух полях
+                    if(userPassText.getText().equals(userPassCheck.getText())){
+                        if(report.equals("23505")){
+                            showAlert("Пользователь с таким логином уже существует", "Ошибка!", true);
+                        }else if(report.equals("1")){
+                            //System.out.println("uspeh");
+                            showAlert("Пользователь успешно создан" ,"Информация", false);
+                        }
+                    }else {
+                        showAlert("Пароли должны совпадать", "Ошибка!", true);
+                        //errorLabel.setText("пароли должны совпадать");
+                    }
+                }else{
+                    showAlert("Заполните все поля", "Ошибка!", true);
+                }
+            }
+        });
+    }
+
+    public void showAlert(String alertText, String alertTitle, boolean isError){
+        Alert alert_info;
+        if(isError){
+            alert_info = new Alert(Alert.AlertType.WARNING);
+            alert_info.setContentText(alertText);
+            alert_info.setTitle(alertTitle);
+        }else{
+            alert_info = new Alert(Alert.AlertType.INFORMATION);
+            alert_info.setContentText(alertText);
+            alert_info.setTitle(alertTitle);
+        }
+        alert_info.showAndWait();
     }
 }

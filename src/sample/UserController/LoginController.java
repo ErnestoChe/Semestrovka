@@ -10,7 +10,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import sample.DataBaseController.dbHandler;
+import sample.DataBaseController.dbConnection;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -34,6 +34,7 @@ public class LoginController {
 
     @FXML
     void initialize() throws IOException {
+        //переход к окну регистрации
         registerButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -53,17 +54,18 @@ public class LoginController {
                 }
             }
         });
+        //проверка подключения к базе
+        // TODO вход в систему пользователя
+        // TODO логи в базу о том, что зашел в систему
         loginButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 try {
-                    if(dbHandler.testConn()){
+                    if(dbConnection.getConnection().isValid(0)){
                         System.out.println("connection valid");
                     }else System.out.println("connection is invalid");
                 } catch (SQLException e) {
                     e.printStackTrace();
-                    System.out.println("connection is invalid");
-                    errorLabel.setText("couldnt connect to db");
                 }
             }
         });

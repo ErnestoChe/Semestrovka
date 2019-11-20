@@ -14,9 +14,10 @@
       <Label layoutX="177.0" layoutY="14.0" text="Surname" />
       <TextField fx:id="userSurnameText" layoutX="177.0" layoutY="32.0" promptText="Enter surname" />
       <TextField fx:id="userPassCheck" layoutX="177.0" layoutY="115.0" promptText="Re-enter password" />
-      <TextField fx:id="userId" layoutX="13.0" layoutY="88.0" prefHeight="26.0" prefWidth="149.0" promptText="Enter your name in system" />
+      <TextField fx:id="userLogin" layoutX="13.0" layoutY="88.0" prefHeight="26.0" prefWidth="149.0" promptText="Enter your name in system" />
       <Label layoutX="15.0" layoutY="71.0" text="Login" />
       <Button fx:id="userRegButton" layoutX="11.0" layoutY="150.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="150.0" text="Register" />
       <Button fx:id="backButton" layoutX="176.0" layoutY="151.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="149.0" text="Back" />
+      <Label fx:id="errorLabel" layoutX="334.0" layoutY="93.0" prefHeight="18.0" prefWidth="194.0" />
    </children>
 </AnchorPane>
