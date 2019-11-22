@@ -48,10 +48,8 @@ public class RegistrationController {
         backButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-
-                Stage stage;
                 Parent root;
-                stage = (Stage) backButton.getScene().getWindow();
+                Stage stage = (Stage) backButton.getScene().getWindow();
                 backButton.getScene().getWindow().hide();
                 System.out.println("register back to login button");
                 try {
