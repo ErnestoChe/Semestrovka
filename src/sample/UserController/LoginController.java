@@ -35,7 +35,9 @@ public class LoginController {
     private Label errorLabel;
 
     @FXML
-    void openNewStage(javafx.event.ActionEvent event) throws IOException {
+    void openNewStage(javafx.event.ActionEvent event) throws IOException
+    {
+        // TODO логи в базу о том, что зашел в систему
         String login = nameText.getText();
         String pass = passText.getText();
 
@@ -53,7 +55,10 @@ public class LoginController {
             System.out.println("login to file chooser");
 
             //переход к окну
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("../MainWindow/main.fxml"));
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().
+                    getResource("../MainWindow/main.fxml")
+            );
             Parent root = (Parent) loader.load();
             MainWindowController mwc = loader.getController();
             mwc.setUserLogin(login);
@@ -67,7 +72,8 @@ public class LoginController {
     }
 
     @FXML
-    void initialize() throws IOException {
+    void initialize() throws IOException
+    {
         //переход к окну регистрации
         registerButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -88,7 +94,7 @@ public class LoginController {
                 }
             }
         });
-        // TODO логи в базу о том, что зашел в систему
+
     }
 }
 

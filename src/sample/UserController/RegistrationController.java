@@ -43,7 +43,8 @@ public class RegistrationController {
     private Label errorLabel;
 
     @FXML
-    void initialize() {
+    void initialize()
+    {
         //кнопка возвращения на окно входа в систему
         backButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -79,6 +80,7 @@ public class RegistrationController {
                                     "Ошибка!",
                                     true);
                         }else if(report.equals("1")){
+                            //TODO successful registration
                             //System.out.println("uspeh");
                             showAlert("Пользователь успешно создан" ,
                                     "Информация",

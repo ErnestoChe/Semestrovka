@@ -8,7 +8,8 @@ import java.sql.SQLException;
 
 public final class dbConnection {
 
-    public static Connection getConnection(){
+    public static Connection getConnection()
+    {
         String dbPassword = "dlxkj1gwf18y";
         String user = "postgres";
         String url = "jdbc:postgresql://localhost:5432/Kursa4?user="+user+"&password=" + dbPassword;

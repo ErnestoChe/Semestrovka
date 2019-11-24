@@ -3,7 +3,8 @@ package sample;
 import javafx.scene.control.Alert;
 
 public class AlertHandler {
-    public static void showAlert(String alertText, String alertTitle, boolean isError){
+    public static void showAlert(String alertText, String alertTitle, boolean isError)
+    {
         Alert alert_info;
         if(isError){
             alert_info = new Alert(Alert.AlertType.WARNING);
