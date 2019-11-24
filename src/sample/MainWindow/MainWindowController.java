@@ -49,8 +49,8 @@ public class MainWindowController implements Initializable {
             @Override
             public void handle(ActionEvent event) {
                 String currentUser = currentUserLabel.getText();
-                useDataButton.setText(currentUser);
                 System.out.println(currentUser);
+
             }
         });
         localFileButton.setOnAction(new EventHandler<ActionEvent>() {

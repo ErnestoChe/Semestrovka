@@ -91,7 +91,6 @@ public class dbHandler {
         }catch (SQLException e){
 
             System.out.println("error code " + e.getSQLState());
-
             System.out.println("данные не добавлены");
 
             return e.getSQLState();
