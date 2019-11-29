@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+
+<?import javafx.scene.layout.AnchorPane?>
+<VBox prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.ChartHandler.ChartController">
+    <children>
+        <MenuBar VBox.vgrow="NEVER">
+            <menus>
+                <Menu mnemonicParsing="false" text="File">
+                    <items>
+                        <MenuItem fx:id="saveFile" mnemonicParsing="false" onAction="#save" text="Save" />
+                        <MenuItem fx:id="saveAsFile" mnemonicParsing="false" onAction="#saveAs" text="Save As…" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem fx:id="quit" mnemonicParsing="false" onAction="#close" text="Quit" />
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+        <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
+            <children>
+                <SplitPane dividerPositions="0.6215538847117794" layoutX="286.0" layoutY="82.0" prefHeight="160.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <items>
+                        <SplitPane dividerPositions="0.6868898186889818" orientation="VERTICAL" prefHeight="574.0" prefWidth="673.0">
+                            <items>
+                                <LineChart fx:id="graph" prefHeight="218.0" prefWidth="431.0">
+                                    <xAxis>
+                                        <CategoryAxis side="BOTTOM" />
+                                    </xAxis>
+                                    <yAxis>
+                                        <NumberAxis side="LEFT" />
+                                    </yAxis>
+                                </LineChart>
+                                <TextArea fx:id="logText" editable="false" prefHeight="200.0" prefWidth="200.0" wrapText="true" />
+                            </items>
+                        </SplitPane>
+                        <ScrollPane hbarPolicy="NEVER" maxWidth="400.0" minWidth="400.0" prefHeight="200.0" prefWidth="400.0" SplitPane.resizableWithParent="false">
+                            <content>
+                                <VBox fx:id="boxGraph" alignment="TOP_CENTER" maxWidth="400.0" minWidth="400.0" prefHeight="200.0" prefWidth="300.0">
+                                    <children>
+                                        <Separator prefWidth="200.0" style="-fx-background-color: #676767;" />
+                                        <Button fx:id="addGraph" mnemonicParsing="false" onAction="#add" text="Add graph">
+                                            <VBox.margin>
+                                                <Insets top="5.0" />
+                                            </VBox.margin>
+                                        </Button>
+                                    </children>
+                                </VBox>
+                            </content>
+                        </ScrollPane>
+                    </items>
+                </SplitPane>
+            </children>
+        </AnchorPane>
+    </children>
+</VBox>

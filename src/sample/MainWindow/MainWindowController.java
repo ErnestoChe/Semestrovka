@@ -3,14 +3,19 @@ package sample.MainWindow;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import sample.FileSelection.Parser;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -32,6 +37,9 @@ public class MainWindowController implements Initializable {
     private Label currentUserLabel;
 
     @FXML
+    private Button logoutButton;
+
+    @FXML
     void initialize() {
     }
 
@@ -44,13 +52,41 @@ public class MainWindowController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources)
     {
-
+        logoutButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Parent root;
+                Stage stage = (Stage) logoutButton.getScene().getWindow();
+                logoutButton.getScene().getWindow().hide();
+                System.out.println("main back to login button");
+                try {
+                    root = FXMLLoader.load(getClass().getResource("/sample/UserController/login.fxml"));
+                    Scene scene = new Scene(root);
+                    stage.setScene(scene);
+                    stage.show();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
         useDataButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 String currentUser = currentUserLabel.getText();
                 System.out.println(currentUser);
-
+                Parent root;
+                Stage stage = (Stage) useDataButton.getScene().getWindow();
+                useDataButton.getScene().getWindow().hide();
+                System.out.println("main to charts button");
+                try {
+                    root = FXMLLoader.load(getClass().getResource("/sample/ChartHandler/charts.fxml"));
+                    Scene scene = new Scene(root);
+                    stage.setScene(scene);
+                    stage.setMaximized(true);
+                    stage.show();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
         localFileButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -70,7 +106,4 @@ public class MainWindowController implements Initializable {
         });
 
     }
-
-
-
 }

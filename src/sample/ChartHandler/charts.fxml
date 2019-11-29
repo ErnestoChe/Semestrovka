@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ColorPicker?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="481.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.ChartHandler.ChartController">
+    <children>
+        <LineChart fx:id="fxChart" title="graphik" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0">
+            <xAxis>
+                <NumberAxis fx:id="yAxis" side="BOTTOM" />
+            </xAxis>
+            <yAxis>
+                <NumberAxis side="LEFT" fx:id="xAxis" />
+            </yAxis>
+        </LineChart>
+        <Button fx:id="openChart" layoutX="14.0" layoutY="400.0" mnemonicParsing="false" text="open" AnchorPane.topAnchor="400.0" />
+      <Button fx:id="closeChart" layoutX="65.0" layoutY="400.0" mnemonicParsing="false" text="close" />
+      <Button fx:id="highChart" layoutX="117.0" layoutY="400.0" mnemonicParsing="false" text="high" />
+      <Button fx:id="lowChart" layoutX="166.0" layoutY="400.0" mnemonicParsing="false" text="low" />
+      <ColorPicker fx:id="openColor" layoutX="14.0" layoutY="426.0" prefHeight="26.0" prefWidth="43.0" />
+      <ColorPicker fx:id="closeColor" layoutX="65.0" layoutY="427.0" prefHeight="26.0" prefWidth="43.0" />
+      <ColorPicker fx:id="highColor" layoutX="117.0" layoutY="427.0" prefHeight="26.0" prefWidth="40.0" />
+      <ColorPicker fx:id="lowColor" layoutX="166.0" layoutY="427.0" prefHeight="26.0" prefWidth="35.0" />
+      <DatePicker fx:id="dateFrom" layoutX="213.0" layoutY="400.0" />
+      <DatePicker fx:id="dateTo" layoutX="213.0" layoutY="426.0" />
+      <Button fx:id="loadData" layoutX="396.0" layoutY="400.0" mnemonicParsing="false" text="load" />
+      <Button fx:id="clearButton" layoutX="396.0" layoutY="428.0" mnemonicParsing="false" text="clear" />
+    </children>
+</AnchorPane>
