@@ -17,7 +17,7 @@ public class dataValues {
         //String date2 = d2.toString();
 
         //String sql = "SELECT * FROM data_values where (date_value BETWEEN '"+ date1 + "' AND '"+ date2+"');";
-        String sql = "SELECT * FROM data_values where (date_value BETWEEN '2019-01-01' AND '2019-01-31');";
+        String sql = "SELECT * FROM data_values where (date_value BETWEEN '2018-02-17' AND '2019-01-31');";
         Connection conn = dbConnection.getConnection();
         PreparedStatement pstmt = conn.prepareStatement(sql,ResultSet.TYPE_SCROLL_SENSITIVE,
                 ResultSet.CONCUR_UPDATABLE);
