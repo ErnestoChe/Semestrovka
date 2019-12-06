@@ -1,5 +1,6 @@
 package sample.ChartHandler;
 
+import org.w3c.dom.ls.LSOutput;
 import sample.DataBaseController.dbConnection;
 
 import java.sql.Connection;
@@ -12,12 +13,12 @@ public class dataValues {
     public static void main(String[] args) throws SQLException {
 
     }
-    public static ResultSet values(/*LocalDate d1, LocalDate d2*/) throws SQLException {
-        //String date1 = d1.toString();
-        //String date2 = d2.toString();
+    public static ResultSet values(LocalDate d1, LocalDate d2, String username) throws SQLException {
+        String date1 = d1.toString();
+        String date2 = d2.toString();
 
-        //String sql = "SELECT * FROM data_values where (date_value BETWEEN '"+ date1 + "' AND '"+ date2+"');";
-        String sql = "SELECT * FROM data_values where (date_value BETWEEN '2018-02-17' AND '2019-01-31');";
+        String sql = "SELECT * FROM data_values where (username = '" + username +"' and date_value BETWEEN '"+ date1 + "' AND '"+ date2+"');";
+        //String sql = "SELECT * FROM data_values where (username = 'test' and date_value BETWEEN '2018-02-17' AND '2018-12-28');";
         Connection conn = dbConnection.getConnection();
         PreparedStatement pstmt = conn.prepareStatement(sql,ResultSet.TYPE_SCROLL_SENSITIVE,
                 ResultSet.CONCUR_UPDATABLE);
@@ -44,7 +45,7 @@ public class dataValues {
         }
         r[0] = (n * sum_xy - sum_x*sum_y)/(n * sum_x_sqr - sum_x * sum_x);
         r[1] = (sum_y - r[0] * sum_x) / n;
-
+        System.out.println(y.length + " LENGTH");
         return r;
     }
 }

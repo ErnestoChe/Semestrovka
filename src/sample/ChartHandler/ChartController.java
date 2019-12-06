@@ -1,6 +1,5 @@
 package sample.ChartHandler;
 
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -8,13 +7,13 @@ import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.Button;
-import javafx.scene.control.ColorPicker;
-import javafx.scene.control.DatePicker;
+import javafx.scene.control.*;
 import javafx.scene.paint.Color;
+
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class ChartController {
 
@@ -49,6 +48,16 @@ public class ChartController {
     ColorPicker highColor;
     @FXML
     ColorPicker lowColor;
+    @FXML
+    CheckBox checkOpen;
+    @FXML
+    CheckBox checkClose;
+    @FXML
+    CheckBox checkHigh;
+    @FXML
+    CheckBox checkLow;
+    @FXML
+    Label labelUser;
 
     ResultSet rs;
 
@@ -75,7 +84,7 @@ public class ChartController {
                 min = 2;
             }
         });
-
+        final int count = 0;
         loadData.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -84,7 +93,7 @@ public class ChartController {
                 max = 1;
                 min = 2;
                 try {
-                    rs = dataValues.values(/*dateFrom.getValue(), dateTo.getValue()*/);
+                    rs = dataValues.values(dateFrom.getValue(), dateTo.getValue(), labelUser.getText());
                     rs.last();
                     count = rs.getRow();
                     rs.first();
@@ -92,20 +101,29 @@ public class ChartController {
                     close = new double[count];
                     high = new double[count];
                     low = new double[count];
+                    open[i] = Double.parseDouble(rs.getString("open_value"));
+                    System.out.println(open[i] + ",");
+                    close[i] = Double.parseDouble(rs.getString("close_value"));
+                    //System.out.println(close[i]);
+                    high[i] = Double.parseDouble(rs.getString("high_value"));
+                    //System.out.println(high[i]);
+                    low[i] = Double.parseDouble(rs.getString("low_value"));
                     while(rs.next()){
-                        open[i] = Double.parseDouble(rs.getString("open_value"));
-                        System.out.println(open[i]);
-                        close[i] = Double.parseDouble(rs.getString("close_value"));
-                        System.out.println(close[i]);
-                        high[i] = Double.parseDouble(rs.getString("high_value"));
-                        System.out.println(high[i]);
-                        low[i] = Double.parseDouble(rs.getString("low_value"));
-                        System.out.println(low[i]);
-                        max = Math.max(max, max(open[i], close[i], high[i], low[i]));
-                        System.out.println(max + " max");
-                        min = Math.min(min, min(open[i], close[i], high[i], low[i]));
-                        System.out.println(min + " min");
                         i++;
+                        open[i] = Double.parseDouble(rs.getString("open_value"));
+                        System.out.println(open[i] + ",");
+                        close[i] = Double.parseDouble(rs.getString("close_value"));
+                        //System.out.println(close[i]);
+                        high[i] = Double.parseDouble(rs.getString("high_value"));
+                        //System.out.println(high[i]);
+                        low[i] = Double.parseDouble(rs.getString("low_value"));
+                        //System.out.println(low[i]);
+
+                        max = Math.max(max, max(open[i], close[i], high[i], low[i]));
+                        //System.out.println(max + " max");
+                        min = Math.min(min, min(open[i], close[i], high[i], low[i]));
+                        //System.out.println(min + " min");
+                        //i++;
                         xAxis.setLowerBound(min - 0.002);
                         xAxis.setUpperBound(max + 0.002);
                     }
@@ -117,166 +135,21 @@ public class ChartController {
                 fxChart.getData().clear();
             }
         });
-        //закомментировано будет только одно построение так как остальные аналогичны
-        openChart.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                //open values
-                //"серия" данных, в которую добавляются все координаты точек
-                XYChart.Series<Number, Number> series1 = new XYChart.Series<>();
-                //доавление точек
-                for (int j = 0; j < i; j++) {
-                    series1.getData().add(new XYChart.Data<>(j, open[j]));
-                }
-                //добавление серии в построение графика
-                fxChart.getData().add(series1);
-                //обращение к серии в обход CSS
-                Node line = series1.getNode().lookup(".chart-series-line");
-                //читаем цвет с колор пикера
-                Color color = Color.valueOf(openColor.getValue().toString() );
-                //форматирование цвета с колопикера в строку
-                String rgb = String.format("%d, %d, %d",
-                        (int) (color.getRed() * 255),
-                        (int) (color.getGreen() * 255),
-                        (int) (color.getBlue() * 255));
-                //меняется цвет линии, "отделяем" точки друг от друга
-                line.setStyle("-fx-stroke: rgba(" + rgb + ", 1.0); -fx-stroke: transparent;");
-                //красим каждую точку в серии
-                for(int index = 0; index<series1.getData().size(); index++){
-                    XYChart.Data dataPoint = series1.getData().get(index);
-                    Node lineSymbol = dataPoint.getNode().lookup(".chart-line-symbol");
-                    lineSymbol.setStyle("-fx-background-color:rgba(" + rgb + ", 1.0), white; /*-fx-background-radius: 0;*/ -fx-padding: 2px ;");
-                    //lineSymbol.setStyle("-fx-background-color: rgba(" + rgb + ", 1.0);");
-                }
-                //делаем точки видимыми
-                fxChart.setCreateSymbols(true);
-                //fxChart.setCreateSymbols(false);
 
-                //имя серии на легенде
-                series1.setName("open");
-                //красим легенду(сложнее всего)
-                //Node legend = series1.getNode().lookup(".chart-legend-item-symbol");
-                //legend.setStyle("-fx-background-color: rgba(" + rgb + ", 1.0), white;");
-            }
+        openChart.setOnAction(event -> {
+            buildGraph(fxChart, open, openColor, checkOpen, "open", count);
         });
-
-        closeChart.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                //close
-                //"серия" данных, в которую добавляются все координаты точек
-                XYChart.Series<Number, Number> series2 = new XYChart.Series<>();
-                //доавление точек
-                for (int j = 0; j < i; j++) {
-                    series2.getData().add(new XYChart.Data<>(j, close[j]));
-                }
-                //добавление серии в построение графика
-                fxChart.getData().add(series2);
-                //обращение к серии в обход CSS
-                Node line = series2.getNode().lookup(".chart-series-line");
-                //читаем цвет с колор пикера
-                Color color = Color.valueOf(closeColor.getValue().toString() );
-                //форматирование цвета с колопикера в строку
-                String rgb = String.format("%d, %d, %d",
-                        (int) (color.getRed() * 255),
-                        (int) (color.getGreen() * 255),
-                        (int) (color.getBlue() * 255));
-                //меняется цвет линии, "отделяем" точки друг от друга
-                line.setStyle("-fx-stroke: rgba(" + rgb + ", 1.0); -fx-stroke: transparent;");
-                //красим каждую точку в серии
-                for(int index = 0; index<series2.getData().size(); index++){
-                    XYChart.Data dataPoint = series2.getData().get(index);
-                    Node lineSymbol = dataPoint.getNode().lookup(".chart-line-symbol");
-                    //lineSymbol.setStyle("-fx-background-color: rgba(" + rgb + ", 1.0), white;");
-                    lineSymbol.setStyle("-fx-background-color:rgba(" + rgb + ", 1.0), white; /*-fx-background-radius: 0;*/ -fx-padding: 2px ;");
-                }
-                //делаем точки видимыми
-                fxChart.setCreateSymbols(true);
-                //имя серии на легенде
-                series2.setName("close");
-                //красим легенду(сложнее всего)
-
-            }
+        closeChart.setOnAction(event -> {
+            buildGraph(fxChart, close, closeColor, checkClose, "close", count);
         });
-
-        highChart.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                //high
-                //"серия" данных, в которую добавляются все координаты точек
-                XYChart.Series<Number, Number> series2 = new XYChart.Series<>();
-                //доавление точек
-                for (int j = 0; j < i; j++) {
-                    series2.getData().add(new XYChart.Data<>(j, high[j]));
-                }
-                //добавление серии в построение графика
-                fxChart.getData().add(series2);
-                //обращение к серии в обход CSS
-                Node line = series2.getNode().lookup(".chart-series-line");
-                //читаем цвет с колор пикера
-                Color color = Color.valueOf(highColor.getValue().toString() );
-                //форматирование цвета с колопикера в строку
-                String rgb = String.format("%d, %d, %d",
-                        (int) (color.getRed() * 255),
-                        (int) (color.getGreen() * 255),
-                        (int) (color.getBlue() * 255));
-                //меняется цвет линии, "отделяем" точки друг от друга
-                line.setStyle("-fx-stroke: rgba(" + rgb + ", 1.0); -fx-stroke: transparent;");
-                //красим каждую точку в серии
-                for(int index = 0; index<series2.getData().size(); index++){
-                    XYChart.Data dataPoint = series2.getData().get(index);
-                    Node lineSymbol = dataPoint.getNode().lookup(".chart-line-symbol");
-                    //lineSymbol.setStyle("-fx-background-color: rgba(" + rgb + ", 1.0), white;");
-                    lineSymbol.setStyle("-fx-background-color:rgba(" + rgb + ", 1.0), white; /*-fx-background-radius: 0;*/ -fx-padding: 2px ;");
-                }
-                //делаем точки видимыми
-                fxChart.setCreateSymbols(true);
-                //имя серии на легенде
-                series2.setName("high");
-                //красим легенду(сложнее всего)
-
-            }
+        highChart.setOnAction(event -> {
+            buildGraph(fxChart, high, highColor, checkHigh, "high", count);
         });
-
-        lowChart.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                //low
-                //"серия" данных, в которую добавляются все координаты точек
-                XYChart.Series<Number, Number> series2 = new XYChart.Series<>();
-                //доавление точек
-                for (int j = 0; j < i; j++) {
-                    series2.getData().add(new XYChart.Data<>(j, low[j]));
-                }
-                //добавление серии в построение графика
-                fxChart.getData().add(series2);
-                //обращение к серии в обход CSS
-                Node line = series2.getNode().lookup(".chart-series-line");
-                //читаем цвет с колор пикера
-                Color color = Color.valueOf(lowColor.getValue().toString() );
-                //форматирование цвета с колопикера в строку
-                String rgb = String.format("%d, %d, %d",
-                        (int) (color.getRed() * 255),
-                        (int) (color.getGreen() * 255),
-                        (int) (color.getBlue() * 255));
-                //меняется цвет линии, "отделяем" точки друг от друга
-                line.setStyle("-fx-stroke: rgba(" + rgb + ", 1.0); -fx-stroke: transparent;");
-                //красим каждую точку в серии
-                for(int index = 0; index<series2.getData().size(); index++){
-                    XYChart.Data dataPoint = series2.getData().get(index);
-                    Node lineSymbol = dataPoint.getNode().lookup(".chart-line-symbol");
-                    //lineSymbol.setStyle("-fx-background-color: rgba(" + rgb + ", 1.0), white;");
-                    lineSymbol.setStyle("-fx-background-color:rgba(" + rgb + ", 1.0), white; /*-fx-background-radius: 0;*/ -fx-padding: 2px ;");
-                }
-                //делаем точки видимыми
-                fxChart.setCreateSymbols(true);
-                //имя серии на легенде
-                series2.setName("low");
-                //красим легенду(сложнее всего)
-
-            }
+        lowChart.setOnAction(event -> {
+            buildGraph(fxChart, low, lowColor, checkLow, "low", count);
         });
     }
+
     public static double max(double a, double b, double c, double d) {
 
         double max = a;
@@ -303,5 +176,70 @@ public class ChartController {
             min = d;
 
         return min;
+    }
+
+    public static ArrayList<XYChart.Series<Number, Number>> seriesUni(double[] data, boolean mnk){
+        //XYChart.Series<Number, Number> series2 = new XYChart.Series<>();
+        ArrayList<XYChart.Series<Number, Number>> r = new ArrayList<>();
+        XYChart.Series<Number, Number> series1 = new XYChart.Series<>();
+        //доавление точек
+        for (int j = 0; j < data.length; j++) {
+            series1.getData().add(new XYChart.Data<>(j, data[j]));
+        }
+        r.add(series1);
+        //MNK
+        if(mnk){
+            XYChart.Series<Number, Number> series_mnk = new XYChart.Series<>();
+            //series2.setName("mnk");
+            double[] method = dataValues.mnk(data);
+            series_mnk.getData().add(new XYChart.Data<>(-1, (-1) * method[0] + method[1]));
+            series_mnk.getData().add(new XYChart.Data<>(data.length, (data.length) * method[0] + method[1]));
+            System.out.println(method[0]);
+            System.out.println(method[1]);
+            //fxChart.getData().add(series2);
+            r.add(series_mnk);
+        }
+        return r;
+    }
+
+    public static void paint(String color, XYChart.Series<Number, Number> series, boolean isMnk){
+        Node line = series.getNode().lookup(".chart-series-line");
+        if(isMnk){
+            line.setStyle("-fx-stroke: rgba(" + color + ", 1.0); -fx-stroke-width: 2px;");
+        }else{
+            line.setStyle("-fx-stroke: rgba(" + color + ", 1.0); -fx-stroke: transparent;");
+            //красим каждую точку в серии
+            for(int index = 0; index<series.getData().size(); index++){
+                XYChart.Data dataPoint = series.getData().get(index);
+                Node lineSymbol = dataPoint.getNode().lookup(".chart-line-symbol");
+                lineSymbol.setStyle("-fx-background-color:rgba(" + color + ", 1.0); /*-fx-background-radius: 0;*/ -fx-padding: 2px ;");
+                //lineSymbol.setStyle("-fx-background-color: rgba(" + rgb + ", 1.0);");
+            }
+
+        }
+    }
+
+    public static String colorToString(Color color){
+        String rgb = String.format("%d, %d, %d",
+                (int) (color.getRed() * 255),
+                (int) (color.getGreen() * 255),
+                (int) (color.getBlue() * 255));
+        return rgb;
+    }
+
+    public static void buildGraph(LineChart chart, double[] data, ColorPicker color, CheckBox check, String name, int count){
+        ArrayList<XYChart.Series<Number, Number>> list = seriesUni(data, check.isSelected());
+        chart.getData().add(list.get(0));
+        paint(colorToString(Color.valueOf(color.getValue().toString())), list.get(0), false);
+        list.get(0).setName(name);
+        if(list.size()!=1){
+            chart.getData().add(list.get(1));
+            paint(colorToString(Color.valueOf(color.getValue().toString())), list.get(1), true);
+            list.get(1).setName(name + " mnk");
+        }
+    }
+
+    public void setUserLogin(String text) {
+        labelUser.setText(text);
     }
 }
