@@ -1,7 +1,10 @@
 package sample.DataBaseController;
 
 import java.sql.*;
-import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 public class dbHandler {
 
@@ -71,20 +74,32 @@ public class dbHandler {
         try{
             Connection conn = dbConnection.getConnection();
             int result = 0;
+
             for (int i = 0; i < date.length ; i++) {
-                String sql = "INSERT INTO data_values(" +
-                        "username, date_value, open_value, high_value, low_value, close_value) " +
-                        "VALUES(" +
-                        "(select login from users  where login = '" + userName + "'),'" +
-                        date[i].toString() + "'," +
-                        open[i] + "," +
-                        high[i] + "," +
-                        low[i] + "," +
-                        close[i] + ");";
-                System.out.println("added" + date[i]);
+                String sqlCheck = "SELECT * FROM data_values where(" +
+                        "username = '" +userName+ "' and " +
+                        "date_value = '" + date[i].toString() +
+                        "');";
+                PreparedStatement pstmt = conn.prepareStatement(sqlCheck);
+                ResultSet rs = pstmt.executeQuery();
+                if(!rs.next()){
+                    System.out.println("таких данных нет");
+                    String sql = "INSERT INTO data_values(" +
+                            "username, date_value, open_value, high_value, low_value, close_value) " +
+                            "VALUES(" +
+                            "(select login from users  where login = '" + userName + "'),'" +
+                            date[i].toString() + "'," +
+                            open[i] + "," +
+                            high[i] + "," +
+                            low[i] + "," +
+                            close[i] + ");";
+                    System.out.println("added" + date[i]);
+                    PreparedStatement preparedStatement = conn.prepareStatement(sql);
+                    result = preparedStatement.executeUpdate();
+                }else{
+                    System.out.println("такие данные есть");
+                }
                 //return "asd";
-                PreparedStatement preparedStatement = conn.prepareStatement(sql);
-                result = preparedStatement.executeUpdate();
             }
             conn.close();
             return String.valueOf(result);
@@ -96,17 +111,98 @@ public class dbHandler {
             return e.getSQLState();
         }
     }
+    //for users
 
+    /**
+     *
+     * @param user name of user
+     * @param state 0 - reg, 1 - log in, 2 - log out
+     * @return sql state
+     */
+    public static String log(String user, int state){
+        Connection conn = dbConnection.getConnection();
+        String sql = "INSERT INTO logs(login, time_log, msg) VALUES(?,?,?)";
+        PreparedStatement preparedStatement = null;
+        try {
+            preparedStatement = conn.prepareStatement(sql);
+            preparedStatement.setString(1, user);
+            ZonedDateTime receivedTimestamp = ZonedDateTime.now(ZoneId.systemDefault());
+            Timestamp ts = new Timestamp(receivedTimestamp.toInstant().toEpochMilli());
+            preparedStatement.setTimestamp(
+                    2,
+                    ts,
+                    Calendar.getInstance(TimeZone.getTimeZone(receivedTimestamp.getZone()))
+            );
+            String msg = "";
+            switch (state){
+                case 0:
+                    msg = user + " reg";
+                    break;
+                case 1:
+                    msg = user + " logged in";
+                    break;
+                case 2:
+                    msg = user + " logged out";
+                    break;
+            }
+            preparedStatement.setString(3, msg);
 
-    //YYYY-MM-DD
+            int result = preparedStatement.executeUpdate();
+            return String.valueOf(result);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return String.valueOf("asd");
+    }
+    //for koefs
 
-    //insert into data_values(username, date_value, open_value, high_value, low_value, close_value)
-    //values(
-    //	(select login from users  where login = 'erik'),
-    //	'2000-01-01',
-    //	1.1,
-    //	1.2,
-    //	1.3,
-    //	1.4
-    //);
+    /**
+     *
+     * @param user
+     * @param state 1 - added data, 2 - calculations
+     * @param time_bounds
+     * @param instrumnet 1 - lin, 2 - sqr, 3 - exp, 4 hyper
+     * @param koefs a, b, c
+     * @return
+     */
+    /*public static String logData(String user, int state, String time_bounds, int instrumnet, String koefs){
+        //TODO расписать добавление и анализ данных(VVV ЭТО НЕ РАБОТАЕТ VVV)
+        Connection conn = dbConnection.getConnection();
+        String sql = "INSERT INTO logs(login, time_log, msg, time_bounds, instrument, koefs)" +
+                " VALUES(?,?,?,?,?,?)";
+        PreparedStatement preparedStatement = null;
+        try {
+            preparedStatement = conn.prepareStatement(sql);
+            preparedStatement.setString(1, user);
+            ZonedDateTime receivedTimestamp = ZonedDateTime.now(ZoneId.systemDefault());
+            Timestamp ts = new Timestamp(receivedTimestamp.toInstant().toEpochMilli());
+            preparedStatement.setTimestamp(
+                    2,
+                    ts,
+                    Calendar.getInstance(TimeZone.getTimeZone(receivedTimestamp.getZone()))
+            );
+            String msg = "";
+            switch (state){
+                case 1:
+                    msg = user + " added data";
+                    break;
+                case 2:
+                    msg = user + " analysed";
+                    break;
+            }
+            preparedStatement.setString(3, msg);
+            preparedStatement.setString(4, time_bounds);
+            if(instrumnet != 0){
+                preparedStatement.setInt(5, instrumnet);
+            }else preparedStatement.setInt(5, new Integer(null));
+            if(!koefs.equals("")){
+                preparedStatement.setString(6, koefs);
+            }
+            int result = preparedStatement.executeUpdate();
+            return String.valueOf(result);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return "ahahahahah";
+    }*/
 }

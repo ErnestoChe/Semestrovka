@@ -13,6 +13,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import sample.ChartHandler.ChartController;
+import sample.DataBaseController.dbHandler;
 import sample.FileSelection.Parser;
 
 import java.io.File;
@@ -56,6 +57,7 @@ public class MainWindowController implements Initializable {
         logoutButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                dbHandler.log(currentUserLabel.getText(), 2);
                 Parent root;
                 Stage stage = (Stage) logoutButton.getScene().getWindow();
                 logoutButton.getScene().getWindow().hide();
@@ -68,6 +70,17 @@ public class MainWindowController implements Initializable {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+            }
+        });
+        webFileButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                String currentUser = currentUserLabel.getText();
+                Parser p = new Parser();
+                String url = urlText.getText();
+                File f = p.fileDowndload(url);
+                p.readData(f);
+                p.sendData(currentUser);
             }
         });
         useDataButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -107,7 +120,6 @@ public class MainWindowController implements Initializable {
                 String currentUser = currentUserLabel.getText();
                 FileChooser file_chooser = new FileChooser();
                 File file = file_chooser.showOpenDialog(localFileButton.getScene().getWindow());
-                String curr = currentUserLabel.getText();
                 if (file != null) {
                     System.out.println("хочю файл");
                     Parser parser = new Parser();

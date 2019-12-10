@@ -3,6 +3,9 @@ package sample.FileSelection;
 import sample.DataBaseController.dbHandler;
 
 import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.file.Files;
 import java.sql.Date;
 import java.util.ArrayList;
 
@@ -60,9 +63,29 @@ public class Parser {
             close[j] = Double.parseDouble(tmp[7]);
             j++;
         }
-
+        String dates = date[0] + "-" + date[j-1];
+        //dbHandler.logData(user, 1, dates, 0, "");
         dbHandler.addData(user, date, open, high, low, close);
     }
+    public static File fileDowndload(String urlLine){
+        try {
+            URL url = new URL(urlLine);
+            InputStream inputStream = url.openStream();
+            File file = new File("text.txt");
+            if(!file.exists()) {
+                Files.copy(inputStream, new File("text.txt").toPath());
+            }else{
+                System.out.println("Файл уже существует");
+            }
+            return file;
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 
     public Date convertToDate(String line){
         Date date = Date.valueOf(convert(line));

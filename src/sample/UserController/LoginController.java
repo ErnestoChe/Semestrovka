@@ -45,6 +45,8 @@ public class LoginController {
         System.out.println(user);
 
         if(!user.equals("")){
+            String otladka = dbHandler.log(user, 1);
+            System.out.println("otladka " + otladka);
             showAlert("Welcome " + user,
                     "login succesful",
                     false);

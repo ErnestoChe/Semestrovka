@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Button?>
@@ -11,39 +12,56 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="575.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.ChartHandler.ChartController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="783.0" prefWidth="958.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.ChartHandler.ChartController">
     <children>
-        <LineChart fx:id="fxChart" title="graphik" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0">
+        <LineChart fx:id="fxChart" layoutX="6.0" prefWidth="594.0" title="graphik" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="0.0">
             <xAxis>
-                <NumberAxis fx:id="yAxis" side="BOTTOM" />
+                <CategoryAxis fx:id="yAxis" side="BOTTOM" />
             </xAxis>
             <yAxis>
                 <NumberAxis side="LEFT" fx:id="xAxis" />
             </yAxis>
         </LineChart>
-        <Button fx:id="openChart" layoutX="14.0" layoutY="400.0" mnemonicParsing="false" text="open" AnchorPane.topAnchor="400.0" />
-      <Button fx:id="closeChart" layoutX="65.0" layoutY="400.0" mnemonicParsing="false" text="close" />
-      <Button fx:id="highChart" layoutX="117.0" layoutY="400.0" mnemonicParsing="false" text="high" />
-      <Button fx:id="lowChart" layoutX="166.0" layoutY="400.0" mnemonicParsing="false" text="low" />
-      <ColorPicker fx:id="openColor" layoutX="14.0" layoutY="426.0" prefHeight="26.0" prefWidth="43.0" />
-      <ColorPicker fx:id="closeColor" layoutX="65.0" layoutY="427.0" prefHeight="26.0" prefWidth="43.0" />
-      <ColorPicker fx:id="highColor" layoutX="117.0" layoutY="427.0" prefHeight="26.0" prefWidth="40.0" />
-      <ColorPicker fx:id="lowColor" layoutX="166.0" layoutY="427.0" prefHeight="26.0" prefWidth="35.0" />
-      <DatePicker fx:id="dateFrom" layoutX="213.0" layoutY="400.0" />
-      <DatePicker fx:id="dateTo" layoutX="213.0" layoutY="426.0" />
-      <Button fx:id="loadData" layoutX="396.0" layoutY="400.0" mnemonicParsing="false" text="load" />
-      <Button fx:id="clearButton" layoutX="396.0" layoutY="428.0" mnemonicParsing="false" text="clear" />
-      <CheckBox fx:id="checkOpen" layoutX="14.0" layoutY="454.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="43.0" text="CheckBox" />
-      <CheckBox fx:id="checkClose" layoutX="65.0" layoutY="455.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="43.0" text="CheckBox" />
-      <CheckBox fx:id="checkHigh" layoutX="117.0" layoutY="456.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="40.0" text="CheckBox" />
-      <CheckBox fx:id="checkLow" layoutX="164.0" layoutY="456.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="35.0" text="CheckBox" />
-      <Label fx:id="labelUser" layoutX="14.0" layoutY="14.0" text="name" />
-      <Label layoutX="445.0" layoutY="404.0" prefHeight="18.0" prefWidth="141.0" text="Label" />
-      <TableView layoutX="17.0" layoutY="475.0" prefHeight="200.0" prefWidth="200.0">
+        <Button fx:id="openChart" layoutX="14.0" layoutY="400.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="100.0" text="open" AnchorPane.topAnchor="400.0" />
+      <Button fx:id="closeChart" layoutX="121.0" layoutY="400.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="100.0" text="close" />
+      <Button fx:id="highChart" layoutX="228.0" layoutY="399.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="100.0" text="high" />
+      <Button fx:id="lowChart" layoutX="334.0" layoutY="399.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="100.0" text="low" />
+      <ColorPicker fx:id="openColor" layoutX="14.0" layoutY="426.0" prefHeight="26.0" prefWidth="100.0" />
+      <ColorPicker fx:id="closeColor" layoutX="121.0" layoutY="426.0" prefHeight="26.0" prefWidth="100.0" />
+      <ColorPicker fx:id="highColor" layoutX="228.0" layoutY="426.0" prefHeight="26.0" prefWidth="100.0" />
+      <ColorPicker fx:id="lowColor" layoutX="334.0" layoutY="426.0" prefHeight="26.0" prefWidth="100.0" />
+      <DatePicker fx:id="dateFrom" layoutX="440.0" layoutY="399.0" />
+      <DatePicker fx:id="dateTo" layoutX="440.0" layoutY="426.0" />
+      <Button fx:id="loadData" layoutX="622.0" layoutY="400.0" mnemonicParsing="false" text="load" />
+      <Button fx:id="clearButton" layoutX="621.0" layoutY="426.0" mnemonicParsing="false" text="clear" />
+      <CheckBox fx:id="checkOpen" layoutX="14.0" layoutY="454.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="100.0" text="Linear" />
+      <CheckBox fx:id="checkClose" layoutX="121.0" layoutY="454.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="100.0" text="Linear" />
+      <CheckBox fx:id="checkHigh" layoutX="228.0" layoutY="454.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="100.0" text="Linear" />
+      <CheckBox fx:id="checkLow" layoutX="334.0" layoutY="454.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="100.0" text="Linear" />
+      <Label fx:id="labelUser" layoutX="14.0" layoutY="14.0" text="test" />
+      <TableView fx:id="tableDays" layoutX="440.0" layoutY="463.0" prefHeight="200.0" prefWidth="502.0">
         <columns>
-          <TableColumn prefWidth="75.0" text="C1" />
-          <TableColumn prefWidth="75.0" text="C2" />
+            <TableColumn fx:id="dateColumn" prefWidth="165.0" text="date" />
+            <TableColumn fx:id="openColumn" prefWidth="85.0" text="open" />
+            <TableColumn fx:id="closeColumn" prefWidth="85.0" text="close" />
+            <TableColumn fx:id="highColumn" minWidth="0.0" prefWidth="85.0" text="high" />
+            <TableColumn fx:id="lowColumn" prefWidth="85.0" text="low" />
         </columns>
       </TableView>
+      <CheckBox fx:id="sqrOpen" layoutX="10.0" layoutY="518.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="100.0" text="Square" />
+      <CheckBox fx:id="sqrClose" layoutX="119.0" layoutY="518.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="100.0" text="Sqr" />
+      <CheckBox fx:id="sqrHigh" layoutX="226.0" layoutY="518.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="100.0" text="Sqr" />
+      <CheckBox fx:id="sqrLow" layoutX="332.0" layoutY="518.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="100.0" text="Sqr" />
+      <Label fx:id="linLabelOpen" layoutX="14.0" layoutY="472.0" prefHeight="43.0" prefWidth="100.0" wrapText="true" />
+      <Label fx:id="linLabelClose" layoutX="121.0" layoutY="472.0" prefHeight="26.0" prefWidth="100.0" wrapText="true" />
+      <Label fx:id="linLabelHigh" layoutX="226.0" layoutY="472.0" prefHeight="26.0" prefWidth="100.0" wrapText="true" />
+      <Label fx:id="linLabelLow" layoutX="332.0" layoutY="472.0" prefHeight="26.0" prefWidth="100.0" wrapText="true" />
+      <Label fx:id="sqrLabelOpen" layoutX="10.0" layoutY="536.0" prefHeight="58.0" prefWidth="100.0" wrapText="true" />
+      <Label fx:id="sqrLabelClose" layoutX="121.0" layoutY="536.0" prefHeight="58.0" prefWidth="100.0" wrapText="true" />
+      <Label fx:id="sqrLabelHigh" layoutX="226.0" layoutY="536.0" prefHeight="58.0" prefWidth="100.0" wrapText="true" />
+      <Label fx:id="sqrLabelLow" layoutX="332.0" layoutY="536.0" prefHeight="58.0" prefWidth="100.0" wrapText="true" />
+      <Button fx:id="saveResults" layoutX="691.0" layoutY="401.0" mnemonicParsing="false" text="Save" />
+      <CheckBox fx:id="expOpen" layoutX="14.0" layoutY="594.0" mnemonicParsing="false" text="Exp" />
+      <Label fx:id="expLabelOpen" layoutX="14.0" layoutY="612.0" prefHeight="43.0" prefWidth="100.0" />
     </children>
 </AnchorPane>

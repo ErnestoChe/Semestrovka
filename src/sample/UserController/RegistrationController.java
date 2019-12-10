@@ -80,8 +80,9 @@ public class RegistrationController {
                                     "Ошибка!",
                                     true);
                         }else if(report.equals("1")){
-                            //TODO successful registration
                             //System.out.println("uspeh");
+                            String otl = dbHandler.log(login, 0);
+                            System.out.println("registr " + otl);
                             showAlert("Пользователь успешно создан" ,
                                     "Информация",
                                     false);
