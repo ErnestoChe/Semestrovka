@@ -6,19 +6,21 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.chart.*;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.paint.Color;
 import sample.AlertHandler;
-
+import sample.DataBaseController.dbHandler;
+import sample.Formatter;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Date;
 
 public class ChartController {
@@ -29,15 +31,6 @@ public class ChartController {
     NumberAxis xAxis;
     @FXML
     CategoryAxis yAxis;
-    //charts button
-    @FXML
-    Button openChart;
-    @FXML
-    Button closeChart;
-    @FXML
-    Button highChart;
-    @FXML
-    Button lowChart;
     @FXML
     Button clearButton;
     //loads data in time diapason
@@ -50,51 +43,6 @@ public class ChartController {
     //colors
     @FXML
     ColorPicker openColor;
-    @FXML
-    ColorPicker closeColor;
-    @FXML
-    ColorPicker highColor;
-    @FXML
-    ColorPicker lowColor;
-    //linear approximations
-    @FXML
-    CheckBox checkOpen;
-    @FXML
-    CheckBox checkClose;
-    @FXML
-    CheckBox checkHigh;
-    @FXML
-    CheckBox checkLow;
-    @FXML
-    Label linLabelOpen;
-    @FXML
-    Label linLabelClose;
-    @FXML
-    Label linLabelHigh;
-    @FXML
-    Label linLabelLow;
-    //sqr approximations
-    @FXML
-    CheckBox sqrOpen;
-    @FXML
-    CheckBox sqrClose;
-    @FXML
-    CheckBox sqrHigh;
-    @FXML
-    CheckBox sqrLow;
-    @FXML
-    Label sqrLabelOpen;
-    @FXML
-    Label sqrLabelClose;
-    @FXML
-    Label sqrLabelHigh;
-    @FXML
-    Label sqrLabelLow;
-    //exp
-    @FXML
-    CheckBox expOpen;
-    @FXML
-    Label expLabelOpen;
     //util
     @FXML
     Label labelUser;
@@ -113,7 +61,31 @@ public class ChartController {
     private TableColumn<Day, Double> highColumn;
     @FXML
     private TableColumn<Day, Double> lowColumn;
-
+    //ДИКИЙ РЕФАКТОР
+    @FXML
+    ComboBox<String> comboPrice;
+    ObservableList<String> price = FXCollections.observableArrayList(
+            "open",
+            "close",
+            "high",
+            "low"
+    );
+    @FXML
+    ComboBox<String> comboInstrument;
+    ObservableList<String> instrument = FXCollections.observableArrayList(
+            "linear",
+            "square",
+            "exp",
+            "hyper"
+    );
+    @FXML
+    Button universalAdd;
+    @FXML
+    Button universalClearAdd;
+    @FXML
+    Label koefsLabel;
+    @FXML
+    Label avgMistakeLabel;
 
     ResultSet rs;
 
@@ -125,9 +97,13 @@ public class ChartController {
     double[] high;
     double[] low;
     Date[] date;
+    String lowest_date, highest_date;
 
     @FXML
     void initialize() {
+        comboPrice.setItems(price);
+        comboInstrument.setItems(instrument);
+        fxChart.setAnimated(false);
         //these are finals for sure
         xAxis.setAutoRanging(false);
         clearButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -138,131 +114,175 @@ public class ChartController {
                 min = 2;
             }
         });
-        final int count = 0;
-        loadData.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                daysData.clear();
-                int count = 0;
-                i = 0;
-                max = 1;
-                min = 2;
-                try {
-                    rs = dataValues.values(dateFrom.getValue(), dateTo.getValue(), labelUser.getText());
-                    rs.last();
-                    count = rs.getRow();
-                    if(count == 0){
-                        System.out.println("нулевой резултсет, чекай данные))00))");
-                        AlertHandler.showAlert("Нет данных за этот период", "Ошибка", true);
-                    }else{
-                        rs.first();
-                        String lowest_date = rs.getString("date_value");
-                        String highest_date = "";
-                        open = new double[count];
-                        close = new double[count];
-                        high = new double[count];
-                        low = new double[count];
-                        date = new Date[count];
-                        open[i] = Double.parseDouble(rs.getString("open_value"));
-                        close[i] = Double.parseDouble(rs.getString("close_value"));
-                        high[i] = Double.parseDouble(rs.getString("high_value"));
-                        low[i] = Double.parseDouble(rs.getString("low_value"));
-                        date[i] = new SimpleDateFormat("yyyy-MM-dd").parse(lowest_date);
-                        daysData.add(new Day(date[i].toString(), open[i], close[i], high[i], low[i]));
-                        while(rs.next()){
-                            //System.out.println(open[i] + ",");
-                            System.out.println(date[i]);
-                            //System.out.println(close[i]);
-                            //System.out.println(high[i]);
-                            //System.out.println(low[i]);
-                            i++;
-                            open[i] = Double.parseDouble(rs.getString("open_value"));
-                            close[i] = Double.parseDouble(rs.getString("close_value"));
-                            high[i] = Double.parseDouble(rs.getString("high_value"));
-                            low[i] = Double.parseDouble(rs.getString("low_value"));
-                            date[i] = new SimpleDateFormat("yyyy-MM-dd").parse(rs.getString("date_value"));
-                            daysData.add(new Day(date[i].toString(), open[i], close[i], high[i], low[i]));
+    }
+    @FXML
+    void loadInfo(){
+        fxChart.setLegendVisible(false);
+        daysData.clear();
+        int count = 0;
+        i = 0;
+        max = 1;
+        min = 2;
+        try {
+            rs = dataValues.values(dateFrom.getValue(), dateTo.getValue(), labelUser.getText());
+            rs.last();
+            count = rs.getRow();
+            if(count == 0){
+                System.out.println("нулевой резултсет, чекай данные))00))");
+                AlertHandler.showAlert("Нет данных за этот период", "Ошибка", true);
+            }else{
+                rs.first();
+                lowest_date = rs.getString("date_value");
+                highest_date = "";
+                open = new double[count];
+                close = new double[count];
+                high = new double[count];
+                low = new double[count];
+                date = new Date[count];
+                open[i] = Double.parseDouble(rs.getString("open_value"));
+                close[i] = Double.parseDouble(rs.getString("close_value"));
+                high[i] = Double.parseDouble(rs.getString("high_value"));
+                low[i] = Double.parseDouble(rs.getString("low_value"));
+                date[i] = new SimpleDateFormat("yyyy-MM-dd").parse(lowest_date);
+                daysData.add(new Day(date[i].toString(), open[i], close[i], high[i], low[i]));
+                while(rs.next()){
+                    //System.out.println(open[i] + ",");
+                    System.out.println(date[i]);
+                    //System.out.println(close[i]);
+                    //System.out.println(high[i]);
+                    //System.out.println(low[i]);
+                    i++;
+                    open[i] = Double.parseDouble(rs.getString("open_value"));
+                    close[i] = Double.parseDouble(rs.getString("close_value"));
+                    high[i] = Double.parseDouble(rs.getString("high_value"));
+                    low[i] = Double.parseDouble(rs.getString("low_value"));
+                    date[i] = new SimpleDateFormat("yyyy-MM-dd").parse(rs.getString("date_value"));
+                    daysData.add(new Day(date[i].toString(), open[i], close[i], high[i], low[i]));
 
-                            max = Math.max(max, max(open[i], close[i], high[i], low[i]));
-                            min = Math.min(min, min(open[i], close[i], high[i], low[i]));
-                            xAxis.setLowerBound(min - 0.001);
-                            xAxis.setUpperBound(max + 0.001);
-                            highest_date = rs.getString("date_value");
-                            date[i] = new SimpleDateFormat("yyyy-MM-dd").parse(highest_date);
-                        }
-                        //System.out.println(lowest_date + " lowest date ");
-                        //System.out.println(highest_date + " highest date");
-                        Date date1 = new SimpleDateFormat("yyyy-MM-dd").parse(lowest_date);
-                        Date date2 = new SimpleDateFormat("yyyy-MM-dd").parse(highest_date);
-                        Date pick_date1 = convertToDateViaSqlDate(dateFrom.getValue());
-                        Date pick_date2 = convertToDateViaSqlDate(dateTo.getValue());
-                        if((pick_date1.compareTo(date1) == -1) || (pick_date2.compareTo(date2) == 1)){  //pick_date1 < date1 || date2 < pick_date2
-                            //System.out.println(pick_date1.toString() + " asdasd " + date2.toString());
-                            //System.out.println("показаны доступные данные между");
-                            String msg = "Показаны доступные данные в диапазоне между  \n" +
-                                    (((pick_date1.compareTo(date1) == -1)) ? date1.toString() : pick_date1.toString()) + "\n" +
-                                    (((pick_date2.compareTo(date2) == 1)) ? date2.toString() : pick_date2.toString());
-                            AlertHandler.showAlert(msg, "Диапазон", false);
-                            //System.out.println(((pick_date1.compareTo(date1) == -1)) ? date1 : pick_date1);
-                            //System.out.println(((pick_date2.compareTo(date2) == 1)) ? date2 : pick_date2);
-                        }
-                        xAxis.setTickUnit(0.01);
-                        //yAxis.setUpperBound(i-1);
-                    }
-                } catch (SQLException | ParseException e) {
-                    e.printStackTrace();
+                    max = Math.max(max, max(open[i], close[i], high[i], low[i]));
+                    min = Math.min(min, min(open[i], close[i], high[i], low[i]));
+                    xAxis.setLowerBound(min - 0.001);
+                    xAxis.setUpperBound(max + 0.001);
+                    highest_date = rs.getString("date_value");
+                    date[i] = new SimpleDateFormat("yyyy-MM-dd").parse(highest_date);
                 }
-                dateColumn.setCellValueFactory(new PropertyValueFactory<Day, String>("date"));
-                openColumn.setCellValueFactory(new PropertyValueFactory<Day, Double>("open"));
-                closeColumn.setCellValueFactory(new PropertyValueFactory<Day, Double>("close"));
-                highColumn.setCellValueFactory(new PropertyValueFactory<Day, Double>("high"));
-                lowColumn.setCellValueFactory(new PropertyValueFactory<Day, Double>("low"));
+                //System.out.println(lowest_date + " lowest date ");
+                //System.out.println(highest_date + " highest date");
+                Date date1 = new SimpleDateFormat("yyyy-MM-dd").parse(lowest_date);
+                Date date2 = new SimpleDateFormat("yyyy-MM-dd").parse(highest_date);
+                Date pick_date1 = Formatter.convertToDateViaSqlDate(dateFrom.getValue());
+                Date pick_date2 = Formatter.convertToDateViaSqlDate(dateTo.getValue());
+                if((pick_date1.compareTo(date1) == -1) || (pick_date2.compareTo(date2) == 1)){  //pick_date1 < date1 || date2 < pick_date2
+                    String lowest_date = ((pick_date1.compareTo(date1) == -1)) ? date1.toString() : pick_date1.toString();
+                    this.lowest_date = lowest_date;
+                    String highest_date = ((pick_date2.compareTo(date2) == 1)) ? date2.toString() : pick_date2.toString();
+                    this.highest_date = highest_date;
+                    String msg = "Показаны доступные данные в диапазоне между  \n" +
+                            lowest_date + "\n" +
+                            highest_date;
+                    AlertHandler.showAlert(msg, "Диапазон", false);
+                }
+                xAxis.setTickUnit(0.01);
+            }
+        } catch (SQLException | ParseException e) {
+            e.printStackTrace();
+        }
+        dateColumn.setCellValueFactory(new PropertyValueFactory<Day, String>("date"));
+        openColumn.setCellValueFactory(new PropertyValueFactory<Day, Double>("open"));
+        closeColumn.setCellValueFactory(new PropertyValueFactory<Day, Double>("close"));
+        highColumn.setCellValueFactory(new PropertyValueFactory<Day, Double>("high"));
+        lowColumn.setCellValueFactory(new PropertyValueFactory<Day, Double>("low"));
 
-                tableDays.setItems(daysData);
-                fxChart.getData().clear();
+        tableDays.setItems(daysData);
+        fxChart.getData().clear();
 
-            }
-        });
+    }
+    @FXML
+    void draw(){}
+    @FXML
+    void drawUniversal(){
+        String color = openColor.getValue().toString();
+        System.out.println(color + " YA COLOR");
+        double[] tmp = null;
+        switch(comboPrice.getValue()){
+            case "open":
+                tmp = open;
+                break;
+            case "close":
+                tmp = close;
+                break;
+            case "high":
+                tmp = high;
+                break;
+            case "low":
+                tmp = low;
+                break;
+        }
+        LineChart chart = fxChart;
+        buildGraph(chart, tmp, date, color);
+        XYChart.Series<String, Number> approx = buildUniversal(tmp);
+        chart.getData().add(approx);
+        paint(Formatter.colorToString(Color.valueOf(color.toString())), approx, true);
+    }
+    @FXML
+    void saveResults(){
+        int inst=0;
+        switch (comboInstrument.getValue()){
+            case "linear":
+                inst = 1;
+                break;
+            case "square":
+                inst = 2;
+                break;
+            case "exp":
+                inst = 3;
+                break;
+            case "hyper":
+                inst = 4;
+                break;
+        }
+        String time_bounds = lowest_date + "-" + highest_date;
+        dbHandler.logData(labelUser.getText(), 2, time_bounds, inst, koefsLabel.getText() +" "+ avgMistakeLabel.getText());
+        System.out.println(koefsLabel.getText() +" "+ avgMistakeLabel.getText() + " " + inst + " " + time_bounds);
+    }
 
-        openChart.setOnAction(event -> {
-            buildGraph(fxChart, open, date, openColor, "open");
-            if(checkOpen.isSelected()){
-                buildLinear(fxChart, open, date, openColor, "open", linLabelOpen);
-            }
-            if(sqrOpen.isSelected()){
-                buildSqr(fxChart, open, date, openColor, "open", sqrLabelOpen);
-            }
-            if(expOpen.isSelected()){
-                buildExp(fxChart, open, date, openColor, "open", expLabelOpen);
-            }
-        });
-        closeChart.setOnAction(event -> {
-            buildGraph(fxChart, close, date,closeColor, "close");
-            if(checkClose.isSelected()){
-                buildLinear(fxChart, close, date, closeColor, "close", linLabelClose);
-            }
-            if(sqrClose.isSelected()){
-                buildSqr(fxChart, close, date, closeColor, "close", sqrLabelClose);
-            }
-        });
-        highChart.setOnAction(event -> {
-            buildGraph(fxChart, high, date,  highColor, "high");
-            if(checkHigh.isSelected()){
-                buildLinear(fxChart, high, date, highColor, "high", linLabelHigh);
-            }
-            if(sqrHigh.isSelected()){
-                buildSqr(fxChart, high, date, highColor, "high", sqrLabelHigh);
-            }
-        });
-        lowChart.setOnAction(event -> {
-            buildGraph(fxChart, low, date, lowColor, "low");
-            if(checkLow.isSelected()){
-                buildLinear(fxChart, low, date, lowColor, "low", linLabelLow);
-            }
-            if(sqrLow.isSelected()){
-                buildSqr(fxChart, low, date, lowColor, "low", sqrLabelLow);
-            }
-        });
+    public XYChart.Series<String, Number> buildUniversal(double[] y){
+        int inst = 0;
+        XYChart.Series<String, Number> series_mnk = new XYChart.Series<>();
+        double[] method = null;
+        switch (comboInstrument.getValue()){
+            case "linear":
+                method = dataValues.mnk(y);
+                series_mnk.getData().add(new XYChart.Data<>(date[0].toString(), (-1) * method[0] + method[1]));
+                series_mnk.getData().add(new XYChart.Data<>(date[date.length-1].toString(), (y.length) * method[0] + method[1]));
+                inst = 1;
+                break;
+            case "square":
+                method = dataValues.sqrtStat(y);
+                for (int i = 0; i < y.length; i++) {
+                    series_mnk.getData().add(new XYChart.Data<>(date[i].toString(), (i*i) * method[0] +i * method[1] + method[2]));
+                }
+                inst = 2;
+                break;
+            case "exp":
+                method = dataValues.expStat(y);
+                double a = Math.exp(method[0]);
+                double b = method[1];
+                for (int i = 0; i < y.length; i++) {
+                    series_mnk.getData().add(new XYChart.Data<>(date[i].toString(), a * Math.exp(b * i)));
+                }
+                inst = 3;
+                break;
+            case "hyper":
+                method = dataValues.hyperStat(y);
+                for (int i = 1; i < y.length; i++) {
+                    series_mnk.getData().add(new XYChart.Data<>(date[i].toString(), method[0] + method[1]/i));
+                }
+                inst = 4;
+                break;
+        }
+        printAns(method);
+        return series_mnk;
     }
 
     public static double max(double a, double b, double c, double d) {
@@ -293,30 +313,6 @@ public class ChartController {
         return min;
     }
 
-    public static XYChart.Series<String, Number> seriesUni(Date[] date, double[] data){
-        //XYChart.Series<Number, Number> series2 = new XYChart.Series<>();
-        //ArrayList<XYChart.Series<String, Number>> r = new ArrayList<>();
-        XYChart.Series<String, Number> series1 = new XYChart.Series<>();
-        //доавление точек
-        for (int j = 0; j < data.length; j++) {
-            series1.getData().add(new XYChart.Data<>(date[j].toString(), data[j]));
-        }
-        //r.add(series1);
-        //MNK
-        /*if(mnk){
-            XYChart.Series<String, Number> series_mnk = new XYChart.Series<>();
-            //series2.setName("mnk");
-            double[] method = dataValues.mnk(data);
-            series_mnk.getData().add(new XYChart.Data<>(date[0].toString(), (-1) * method[0] + method[1]));
-            series_mnk.getData().add(new XYChart.Data<>(date[date.length-1].toString(), (data.length) * method[0] + method[1]));
-            System.out.println(method[0]);
-            System.out.println(method[1]);
-            //fxChart.getData().add(series2);
-            r.add(series_mnk);
-        }*/
-        return series1;
-    }
-
     public static void paint(String color, XYChart.Series<String, Number> series, boolean isMnk){
         Node line = series.getNode().lookup(".chart-series-line");
         if(isMnk){
@@ -339,80 +335,35 @@ public class ChartController {
         }
     }
 
-    public static String colorToString(Color color){
-        String rgb = String.format("%d, %d, %d",
-                (int) (color.getRed() * 255),
-                (int) (color.getGreen() * 255),
-                (int) (color.getBlue() * 255));
-        return rgb;
-    }
-
-    public static void buildGraph(LineChart chart, double[] data, Date[] date, ColorPicker color, String name){
-        XYChart.Series<String, Number> list = seriesUni(date, data);
-        chart.getData().add(list);
-        paint(colorToString(Color.valueOf(color.getValue().toString())), list, false);
-        list.setName(name);
-
-        /*if(list.size()!=1){
-            chart.getData().add(list.get(1));
-            paint(colorToString(Color.valueOf(color.getValue().toString())), list.get(1), true);
-            list.get(1).setName(name + " mnk");
-        }*/
-    }
-
-    public static void buildLinear(LineChart chart, double[] data, Date[] date, ColorPicker color, String name, Label label){
-        XYChart.Series<String, Number> series_mnk = new XYChart.Series<>();
-        //series2.setName("mnk");
-        double[] method = dataValues.mnk(data);
-        series_mnk.getData().add(new XYChart.Data<>(date[0].toString(), (-1) * method[0] + method[1]));
-        series_mnk.getData().add(new XYChart.Data<>(date[date.length-1].toString(), (data.length) * method[0] + method[1]));
-        String a = String.format("%.5f", method[0]);
-        String b = String.format("%.5f", method[1]);
-        label.setText("a = " + a + "\n b = " + b);
-        chart.getData().add(series_mnk);
-        paint(colorToString(Color.valueOf(color.getValue().toString())), series_mnk, true);
-        series_mnk.setName(name + "mnk");
-    }
-
-    public static void buildSqr(LineChart chart, double[] data, Date[] date, ColorPicker color, String name, Label label){
-        XYChart.Series<String, Number> series_mnk = new XYChart.Series<>();
-        double[] method = dataValues.sqrtStat(data);
-        for (int i = 0; i < data.length; i++) {
-            series_mnk.getData().add(new XYChart.Data<>(date[i].toString(), (i*i) * method[0] +i * method[1] + method[2]));
+    public void buildGraph(LineChart chart, double[] data, Date[] date, String color){
+        XYChart.Series<String, Number> series1 = new XYChart.Series<>();
+        //доавление точек
+        for (int j = 0; j < data.length; j++) {
+            series1.getData().add(new XYChart.Data<>(date[j].toString(), data[j]));
         }
-        System.out.println(method[0]);
-        System.out.println(method[1]);
-        System.out.println(method[2]);
-        chart.getData().add(series_mnk);
-        String a = String.format("%.5f", method[0]);
-        String b = String.format("%.5f", method[1]);
-        String c = String.format("%.5f", method[2]);
-        String ans = "a=" + a + "\n b=" + b + "\n c=" + c;
-        label.setText(ans);
-        paint(colorToString(Color.valueOf(color.getValue().toString())), series_mnk, true);
-        series_mnk.setName(name + "sqr");
-    }
-
-    public static void buildExp(LineChart chart, double[] data, Date[] date, ColorPicker color, String name, Label label){
-        double[] k = dataValues.expStat(data);
-        double a = Math.exp(k[0]);
-        double b = k[1];
-        System.out.println();
-        System.out.println(k[1]);
-        XYChart.Series<String, Number> series_mnk = new XYChart.Series<>();
-        for (int i = 0; i < data.length; i++) {
-            series_mnk.getData().add(new XYChart.Data<>(date[i].toString(), a * Math.exp(b * i)));
-        }
-        chart.getData().add(series_mnk);
-        paint(colorToString(Color.valueOf(color.getValue().toString())), series_mnk, true);
-        series_mnk.setName(name + "exp");
+        chart.getData().add(series1);
+        paint(Formatter.colorToString(Color.valueOf(color.toString())), series1, false);
     }
 
     public void setUserLogin(String text) {
         labelUser.setText(text);
     }
+    public void printAns(double[]y){
+        String a = String.format("%.5f", y[0]);
+        String b = String.format("%.5f", y[1]);
+        String c = String.format("%.5f", y[2]);
+        String answer, mistake;
+        if(y.length == 4){
+            String d = String.format("%.5f", y[3]);
+            mistake = d + "%";
+            avgMistakeLabel.setText(mistake);
+            answer = "a="+a+"\n b="+b+" \n c=" + c;
+        }else{
+            mistake = c + "%";
+            avgMistakeLabel.setText(mistake);
+            answer = "a="+a+"\n b="+b;
+        }
+        koefsLabel.setText(answer);
 
-    public Date convertToDateViaSqlDate(LocalDate dateToConvert) {
-        return java.sql.Date.valueOf(dateToConvert);
     }
 }

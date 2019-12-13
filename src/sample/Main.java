@@ -13,10 +13,10 @@ public class Main extends Application {
         Parent root = FXMLLoader.load(getClass().getResource("UserController/login.fxml"));
         //Parent root = FXMLLoader.load(getClass().getResource("FileSelection/filer.fxml"));
 
-        //test charts
-        //Parent root = FXMLLoader.load(getClass().getResource("ChartHandler/charts.fxml"));
-        //primaryStage.setMaximized(true);
-        //end of chart test
+//        test charts
+//        Parent root = FXMLLoader.load(getClass().getResource("ChartHandler/charts.fxml"));
+//        primaryStage.setMaximized(true);
+//        end of chart test
         primaryStage.setTitle("Hello World");
         primaryStage.setScene(new Scene(root, 600, 400));
         primaryStage.show();

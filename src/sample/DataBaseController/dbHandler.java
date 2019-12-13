@@ -165,14 +165,13 @@ public class dbHandler {
      * @param koefs a, b, c
      * @return
      */
-    /*public static String logData(String user, int state, String time_bounds, int instrumnet, String koefs){
+    public static String logData(String user, int state, String time_bounds, int instrumnet, String koefs){
         //TODO расписать добавление и анализ данных(VVV ЭТО НЕ РАБОТАЕТ VVV)
         Connection conn = dbConnection.getConnection();
         String sql = "INSERT INTO logs(login, time_log, msg, time_bounds, instrument, koefs)" +
                 " VALUES(?,?,?,?,?,?)";
-        PreparedStatement preparedStatement = null;
         try {
-            preparedStatement = conn.prepareStatement(sql);
+            PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, user);
             ZonedDateTime receivedTimestamp = ZonedDateTime.now(ZoneId.systemDefault());
             Timestamp ts = new Timestamp(receivedTimestamp.toInstant().toEpochMilli());
@@ -181,28 +180,15 @@ public class dbHandler {
                     ts,
                     Calendar.getInstance(TimeZone.getTimeZone(receivedTimestamp.getZone()))
             );
-            String msg = "";
-            switch (state){
-                case 1:
-                    msg = user + " added data";
-                    break;
-                case 2:
-                    msg = user + " analysed";
-                    break;
-            }
-            preparedStatement.setString(3, msg);
+            preparedStatement.setString(3, "msg");
             preparedStatement.setString(4, time_bounds);
-            if(instrumnet != 0){
-                preparedStatement.setInt(5, instrumnet);
-            }else preparedStatement.setInt(5, new Integer(null));
-            if(!koefs.equals("")){
-                preparedStatement.setString(6, koefs);
-            }
+            preparedStatement.setInt(5, instrumnet);
+            preparedStatement.setString(6, koefs);
             int result = preparedStatement.executeUpdate();
-            return String.valueOf(result);
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         return "ahahahahah";
-    }*/
+    }
 }
