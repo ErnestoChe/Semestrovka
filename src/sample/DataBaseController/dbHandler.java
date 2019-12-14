@@ -165,8 +165,7 @@ public class dbHandler {
      * @param koefs a, b, c
      * @return
      */
-    public static String logData(String user, int state, String time_bounds, int instrumnet, String koefs){
-        //TODO расписать добавление и анализ данных(VVV ЭТО НЕ РАБОТАЕТ VVV)
+    public static String logData(String user, String state, String time_bounds, int instrumnet, String koefs){
         Connection conn = dbConnection.getConnection();
         String sql = "INSERT INTO logs(login, time_log, msg, time_bounds, instrument, koefs)" +
                 " VALUES(?,?,?,?,?,?)";
@@ -180,7 +179,8 @@ public class dbHandler {
                     ts,
                     Calendar.getInstance(TimeZone.getTimeZone(receivedTimestamp.getZone()))
             );
-            preparedStatement.setString(3, "msg");
+
+            preparedStatement.setString(3, state);
             preparedStatement.setString(4, time_bounds);
             preparedStatement.setInt(5, instrumnet);
             preparedStatement.setString(6, koefs);

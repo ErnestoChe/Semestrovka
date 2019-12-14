@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ColorPicker?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="783.0" prefWidth="958.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.ChartHandler.ChartController">
+    <children>
+        <LineChart fx:id="fxChart" layoutX="6.0" prefWidth="594.0" title="graphik" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="0.0">
+            <xAxis>
+                <CategoryAxis fx:id="yAxis" side="BOTTOM" />
+            </xAxis>
+            <yAxis>
+                <NumberAxis side="LEFT" fx:id="xAxis" />
+            </yAxis>
+        </LineChart>
+      <ColorPicker fx:id="openColor" layoutX="14.0" layoutY="398.0" prefHeight="26.0" prefWidth="100.0" />
+      <DatePicker fx:id="dateFrom" layoutX="14.0" layoutY="450.0" />
+      <DatePicker fx:id="dateTo" layoutX="14.0" layoutY="476.0" />
+      <Button fx:id="loadData" layoutX="189.0" layoutY="450.0" mnemonicParsing="false" onAction="#loadInfo" prefHeight="26.0" prefWidth="42.0" text="load" />
+      <Button fx:id="clearButton" layoutX="189.0" layoutY="475.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="41.0" text="clear" />
+      <Label fx:id="labelUser" layoutX="14.0" layoutY="14.0" text="test" />
+      <TableView fx:id="tableDays" layoutX="592.0" layoutY="398.0" prefHeight="200.0" prefWidth="502.0">
+        <columns>
+            <TableColumn fx:id="dateColumn" prefWidth="165.0" text="date" />
+            <TableColumn fx:id="openColumn" prefWidth="85.0" text="open" />
+            <TableColumn fx:id="closeColumn" prefWidth="85.0" text="close" />
+            <TableColumn fx:id="highColumn" minWidth="0.0" prefWidth="85.0" text="high" />
+            <TableColumn fx:id="lowColumn" prefWidth="85.0" text="low" />
+        </columns>
+      </TableView>
+      <Button fx:id="saveResults" layoutX="264.0" layoutY="450.0" mnemonicParsing="false" onAction="#saveResults" text="Save" />
+      <ComboBox fx:id="comboPrice" layoutX="114.0" layoutY="399.0" prefWidth="150.0" />
+      <Button fx:id="universalAdd" layoutX="414.0" layoutY="399.0" mnemonicParsing="false" onAction="#drawUniversal" text="Draw(Add)" />
+      <Button fx:id="universalClearAdd" layoutX="487.0" layoutY="399.0" mnemonicParsing="false" onAction="#draw" text="Clear and Draw" />
+      <ComboBox fx:id="comboInstrument" layoutX="264.0" layoutY="399.0" prefWidth="150.0" />
+      <Label fx:id="koefsLabel" layoutX="315.0" layoutY="457.0" prefHeight="62.0" prefWidth="150.0" wrapText="true" />
+      <Label fx:id="avgMistakeLabel" layoutX="479.0" layoutY="465.0" prefHeight="18.0" prefWidth="79.0" text="AvgMist" />
+      <Button fx:id="backToMain" layoutX="14.0" layoutY="542.0" mnemonicParsing="false" text="Main window" onAction="#back"/>
+    </children>
+</AnchorPane>

@@ -273,7 +273,8 @@ public class ChartController {
                 break;
         }
         String time_bounds = lowest_date + "-" + highest_date;
-        dbHandler.logData(labelUser.getText(), 2, time_bounds, inst, koefsLabel.getText() +" "+ avgMistakeLabel.getText());
+        dbHandler.logData(labelUser.getText(), comboPrice.getValue() + " " + comboInstrument.getValue(),
+                time_bounds, inst, koefsLabel.getText() +" "+ avgMistakeLabel.getText());
         System.out.println(koefsLabel.getText() +" "+ avgMistakeLabel.getText() + " " + inst + " " + time_bounds);
     }
 
