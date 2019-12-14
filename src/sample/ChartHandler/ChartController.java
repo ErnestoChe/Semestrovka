@@ -5,7 +5,10 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
@@ -13,10 +16,13 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 import sample.AlertHandler;
 import sample.DataBaseController.dbHandler;
 import sample.Formatter;
+import sample.MainWindow.MainWindowController;
 
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -86,6 +92,8 @@ public class ChartController {
     Label koefsLabel;
     @FXML
     Label avgMistakeLabel;
+    @FXML
+    Button backToMain;
 
     ResultSet rs;
 
@@ -114,6 +122,29 @@ public class ChartController {
                 min = 2;
             }
         });
+    }
+    @FXML
+    void back(){
+        Stage stage;
+        stage = (Stage) backToMain.getScene().getWindow();
+        backToMain.getScene().getWindow().hide();
+
+        FXMLLoader loader = new FXMLLoader(
+                getClass().
+                        getResource("../MainWindow/main.fxml")
+        );
+        Parent root = null;
+        try {
+            root = (Parent) loader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        MainWindowController mwc = loader.getController();
+        mwc.setUserLogin(labelUser.getText());
+        //stage = new Stage();
+        stage.setScene(new Scene(root));
+        stage.setMaximized(false);
+        stage.show();
     }
     @FXML
     void loadInfo(){
